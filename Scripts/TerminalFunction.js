@@ -122,53 +122,62 @@ function KeyPressed(key) {
 }
 
 function BootSequence() {
-  OutputsText = "";
-  let LoadingChars = ["-", "\\", "|", "/"];
+  let outputText = "";
+  const loadingChars = ["-", "\\", "|", "/"];
+  const asciiLogo = [
+    " __  __          _____  _    _ ______ _    _ ",
+    "|  \\/  |   /\\   |  __ \\| |  | |  ____| |  | |",
+    "| \\  / |  /  \\  | |__) | |  | | |__  | |__| |",
+    "| |\\/| | / /\\ \\ |  _  /| |  | |  __| |  __  |",
+    "| |  | |/ ____ \\| | \\ \\| |__| | |   _| |  | |",
+    "|_|  |_/_/    \\_\\_|  \\_\\\\____/|_|  (_)_|  |_|",
+    "                                             ",
+    "                                             ",
+  ];
 
-  if (Time > 0.1) {
-    OutputsText += " █████╗██╗ ██╗ ████╗ █████╗ ██╗    ██╗██████╗    ████╗ \n";
+  // Show ASCII logo progressively
+  for (let i = 0; i < asciiLogo.length; i++) {
+    if (Time > 0.1 * (i + 1)) {
+      outputText += asciiLogo[i] + "\n";
+    }
   }
-  if (Time > 0.2) {
-    OutputsText += "██╔═══╝██║ ██║██╔═██╗██╔═██╗██║    ██║██╔═══╝   ██╔═██╗\n";
+  if (Time > 1.3) {
+    outputText += "\n\n";
   }
-  if (Time > 0.3) {
-    OutputsText += "██║    ██████║██████║█████╔╝██║    ██║█████╗    ██████║\n";
+
+  // Boot messages
+  if (Time > 1.4) {
+    outputText += "Welcome to MarufOS 1.0.0 x86_64\n";
   }
-  if (Time > 0.4) {
-    OutputsText += "██║    ██╔═██║██╔═██║██╔═██╗██║    ██║██╔══╝    ██╔═██║\n";
+  if (Time > 1.5) {
+    outputText += "Type 'help' to list available commands\n\n\n";
   }
-  if (Time > 0.5) {
-    OutputsText += "╚█████╗██║ ██║██║ ██║██║ ██║██████╗██║██████╗██╗██║ ██║\n";
+
+  // Loading animation (Time between 1.7 and 3.7)
+  if (Time > 1.7 && Time <= 3.7) {
+    const spinnerIndex = Math.floor((Time * 10) % 4);
+    const percentLoaded = Math.min(100, Math.floor((Time - 1.7) / 0.02));
+    outputText += `Loading ${loadingChars[spinnerIndex]} ${percentLoaded}%\n`;
   }
-  if (Time > 0.6) {
-    OutputsText +=
-      " ╚════╝╚═╝ ╚═╝╚═╝ ╚═╝╚═╝ ╚═╝╚═════╝╚═╝╚═════╝╚═╝╚═╝ ╚═╝\n\n\n";
-  }
-  if (Time > 1.1) {
-    OutputsText += "Welcome to Charles-OS 2.9.0 x86_64\n";
-  }
-  if (Time > 1.2) {
-    OutputsText += "Type 'help' to list available commands\n\n\n";
-  }
-  if (Time > 1.7) {
-    OutputsText += `Loading ${
-      LoadingChars[Math.ceil((Math.min(3.7, Time) % 0.4) / 0.1) - 1]
-    } ${Math.ceil(Math.min(100, (Time - 1.7) / 0.02))}%\n`;
-  }
+
+  // Final dots and completion
   if (Time > 3.7) {
-    OutputsText += ".\n";
+    outputText += ".\n";
   }
   if (Time > 3.8) {
-    OutputsText += ".\n";
+    outputText += ".\n";
   }
   if (Time > 3.9) {
-    OutputsText += ".\n";
+    outputText += ".\n";
   }
   if (Time > 4.0) {
-    OutputsText += "Complete!\n\n";
+    outputText += "Complete!\n\n";
   }
 
-  ScrollOffset = Math.min(OutputsText.split("\n").length - 1, ScrollOffset);
+  // Adjust scroll offset safely
+  ScrollOffset = Math.min(outputText.split("\n").length - 1, ScrollOffset);
+
+  OutputsText = outputText;
 }
 
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
@@ -184,32 +193,11 @@ const FileSystem = {
           "projects.txt": {
             type: "file",
             content:
-              "Below are some of the projects I have developed over\nmy 6+ years of coding. This is just a small selection\nof the many projects I've worked on, with several\nothers not making the list. Please note that some of\nthese projects are unfinished—either because I lacked\nthe necessary skills at the time or simply moved on to\nmore interesting challenges. However, rest assured I\nplan to revisit and polish these projects in the future\nimproving their code with my current level of expertise.",
+              "Here are a few projects I've worked on over the years. Some are complete, others are still in progress or paused as I picked up new interests or improved my skills. Each one has taught me something valuable, and I often revisit older work to refine it as I grow as a developer.",
           },
-          "lighting_engine.lnk": {
+          "md5-security-demo.lnk": {
             type: "link",
-            content: "https://github.com/LuckeyDuckey/Pygame_Lighting_Engine",
-          },
-          "wakeword_engine.lnk": {
-            type: "link",
-            content: "https://github.com/LuckeyDuckey/Python-Wake-Word-Engine",
-          },
-          "square_game_halloween.lnk": {
-            type: "link",
-            content: "https://github.com/LuckeyDuckey/Square-Game-Halloween",
-          },
-          "personal_website.lnk": {
-            type: "link",
-            content:
-              "https://github.com/LuckeyDuckey/luckeyduckey.github.io/tree/main",
-          },
-          "password_vault.lnk": {
-            type: "link",
-            content: "https://github.com/LuckeyDuckey/Password-Vault",
-          },
-          "jarvis.lnk": {
-            type: "link",
-            content: "https://github.com/LuckeyDuckey/Jarvis",
+            content: "https://github.com/maruf-hossain/md5-security-demo",
           },
         },
       },
@@ -217,12 +205,12 @@ const FileSystem = {
       "about.txt": {
         type: "file",
         content:
-          "I’m an aspiring software developer with a passion\nfor exploring the vast possibilities of programming.\nI’ve been coding since I was 12, starting with small\ngames in Python and evolving into a diverse range of\nprojects. Over the years, I’ve delved into AI,\nmachine learning, graphics programming, cybersecurity\nand web development. My experience spans from creating\nvirtual assistants and VR applications to developing\nshaders and procedurally generated visuals. I’m driven\nby a love for technology and a desire to learn, create\nand solve complex problems. I’m proficient in Python\nC++, JavaScript, and C#, with Python being my\nstrongest language.",
+          "I'm a developer who loves building purposeful tools. I started with side projects and grew into web, embedded, and AI work. I enjoy learning by doing and am most confident in Python, C, and JavaScript.",
       },
       "experience.txt": {
         type: "file",
         content:
-          "Error 404 not found. That's right I have no\nprofessional in industry experience, however I still\nbring over 6 years of hands-on experience in coding\nand software development from personal projects and\nself-driven learning. I’ve tackled a wide range of\nchallenges, from developing AI-powered virtual\nassistants and machine learning models to creating\ngraphics and VR applications. My projects have allowed\nme to build strong skills in Python, C++, JavaScript\nand C#, and I’ve gained a solid foundation in problem\nsolving, collaboration, and adaptability. I’m eager\nto apply my knowledge and passion for technology in\na professional setting, where I can continue to learn\nand grow as a software developer.",
+          "I’ve worked on real-world projects—from full-stack apps to AI and automation—using Python, JavaScript, C++, and C#. I enjoy solving problems, learning quickly, and building things that matter.",
       },
       "plasma.exe": { type: "executable", content: "plasma" },
     },

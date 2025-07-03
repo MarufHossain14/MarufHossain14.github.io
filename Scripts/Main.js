@@ -54,7 +54,8 @@ uniform sampler2D ShadowMap;
 uniform sampler2D TextTexture;
 uniform float Time;
 
-const vec3 LightColor = vec3(0.52, 0.36, 0.2); // Orange
+const vec3 LightColor = vec3(0.1, 0.85, 0.75); // Teal
+
 //const vec3 LightColor = vec3(0.2, 0.53, 0.2); // Green
 const vec3 SurfaceToLightVector = normalize(vec3(0.0, 5.0, 1.0));
 
@@ -372,19 +373,27 @@ TextCanvas.width = TextCanvas.height = 1024;
 const TextTexture = WebGL.createTexture();
 
 function UpdateTextTexture(NewText) {
-  // Render text on the canvas
   Context.clearRect(0, 0, TextCanvas.width, TextCanvas.height);
-  Context.font = "32px monospace"; //"32px VT323, monospace";
-  Context.fillStyle = "rgb(255, 150, 50)"; // Orange
-  //Context.fillStyle = "rgb(125, 255, 50)"; // Green
+  Context.font = "32px monospace";
+  Context.fillStyle = "rgb(0,255,0)";
 
-  const Lines = NewText.split("\n");
-  Lines.forEach((Line, i) => {
-    Context.fillText(Line, 32, 64 + i * 32);
+  const maxWidth = 55;
+  const rawLines = NewText.split("\n");
+  const wrappedLines = [];
+
+  rawLines.forEach((line) => {
+    while (line.length > maxWidth) {
+      wrappedLines.push(line.slice(0, maxWidth));
+      line = line.slice(maxWidth);
+    }
+    wrappedLines.push(line);
   });
 
-  // Update texture from canvas
-  WebGL.bindTexture(WebGL.TEXTURE_2D, TextTexture);
+  wrappedLines.slice(0, 30).forEach((line, i) => {
+    Context.fillText(line, 32, 64 + i * 32);
+  });
+
+  WebGL.bindTexture(WebGL.TEhXTURE_2D, TextTexture);
   WebGL.texImage2D(
     WebGL.TEXTURE_2D,
     0,
@@ -399,7 +408,7 @@ function UpdateTextTexture(NewText) {
     WebGL.LINEAR_MIPMAP_LINEAR
   );
   WebGL.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_MAG_FILTER, WebGL.LINEAR);
-  WebGL.generateMipmap(WebGL.TEXTURE_2D);
+  WebGL.texParameteri(WebGL.TEXTURE_2D, WebGL.TEXTURE_MIN_FILTER, WebGL.LINEAR);
 }
 
 // 30 lines max each line 55 chars long max
@@ -574,7 +583,8 @@ function UpdateScene(CurrentTime) {
   // Rendering // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
 
   // Clear the canvas
-  WebGL.clearColor(0.1, 0.1, 0.1, 1.0);
+  WebGL.clearColor(0.063, 0.094, 0.125, 1.0); // approximate rgb(16,24,32)
+
   WebGL.clear(WebGL.COLOR_BUFFER_BIT | WebGL.DEPTH_BUFFER_BIT);
 
   // Pass in all uniforms
@@ -773,20 +783,15 @@ Projects.forEach((Project) => {
 
       let Interval = setInterval(() => {
         // Split text into its letters
-        Text.innerText = Text.innerText
+        Text.innerText = Text.dataset.value
           .split("")
-
-          // Assign each letter a new value
           .map((letter, index) => {
-            // Return original letter
-            if (index < Iteration || Text.dataset.value[index] == " ") {
-              return Text.dataset.value[index];
+            if (index < Iteration || letter === " ") {
+              return letter;
             }
-
-            // Return random letter
             return Letters[Math.floor(Math.random() * 36)];
           })
-          .join(""); // Join the word back togeather from the letters
+          .join("");
 
         if (Iteration >= Text.dataset.value.length) {
           clearInterval(Interval);
