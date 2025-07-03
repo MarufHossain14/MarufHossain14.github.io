@@ -1,0 +1,242 @@
+/* Base styles */
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #101820; /* deep navy */
+  color: #e0f0ff; /* light text */
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Main Button */
+#MainButton {
+  width: 8vh;
+  height: 8vh;
+  position: fixed;
+  left: 50vw;
+  top: 95vh;
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #fff;
+  font-size: 3.2vh;
+
+  background: linear-gradient(135deg, #147880, #19a2a6);
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#MainButton:hover {
+  transform: translate(-50%, -50%) scale(1.1);
+  background: linear-gradient(135deg, #19a2a6, #1bd9c2);
+}
+
+/* Main Container */
+#MainDiv {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  background-color: #15232f;
+  overflow: hidden;
+
+  transition: transform 0.5s ease;
+  transform: translateY(0%);
+}
+
+#MainDiv.hidden {
+  transform: translateY(100%);
+}
+
+/* Panels */
+#LeftPanel {
+  width: 50vh;
+  height: 100%;
+  position: absolute;
+  left: calc(50vw - 50vh);
+  margin-top: 10vh;
+  pointer-events: none;
+}
+
+#RightPanel {
+  width: 50vh;
+  height: 100%;
+  position: absolute;
+  padding: 10vh calc(50vw - 50vh) 0 50vw;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+#RightPanel::-webkit-scrollbar {
+  display: none;
+}
+
+/* Mouse Glow */
+#MouseGlow {
+  width: 30vmax;
+  height: 30vmax;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  background: radial-gradient(circle, rgba(27,217,194,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+#MouseGlowBlur {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  backdrop-filter: blur(12vmax);
+}
+
+/* Typography */
+h1 {
+  font-size: 5vh;
+  margin: 0 0 1vh;
+  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  pointer-events: auto;
+}
+
+h2 {
+  font-size: 2.2vh;
+  margin: 0 0 1.5vh;
+  color: #cde8f6;
+  font-weight: 400;
+  pointer-events: auto;
+}
+
+p {
+  font-size: 1.7vh;
+  margin: 0;
+  color: #99b9cc;
+  line-height: 2.6vh;
+  pointer-events: auto;
+}
+
+/* Navigation */
+.NavContainer {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.NavItem {
+  display: flex;
+  align-items: center;
+  margin: 2vh 0;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.2s ease;
+}
+
+.NavItem:hover {
+  transform: scale(1.1);
+}
+
+.NavItemDot {
+  width: 1.2vh;
+  height: 1.2vh;
+  border-radius: 50%;
+  background-color: #355b6c;
+  transition: all 0.3s ease;
+}
+
+.NavItemText {
+  margin-left: 1.2vh;
+  font-size: 1.7vh;
+  color: #99b9cc;
+  transition: color 0.3s ease;
+}
+
+.NavItem.Active .NavItemDot {
+  background-color: #1bd9c2;
+  transform: scale(1.6);
+}
+
+.NavItem.Active .NavItemText {
+  color: #e0f0ff;
+}
+
+/* Sections */
+.Section {
+  margin-bottom: 12vh;
+}
+
+/* Social Links */
+#SocialsContainer {
+  position: absolute;
+  top: 80vh;
+  transform: translateY(-50%);
+
+  display: flex;
+  gap: 3vh;
+}
+
+#SocialsContainer a {
+  display: inline-block;
+  transform: scale(1);
+  filter: invert(80%) brightness(85%);
+  transition: all 0.2s ease;
+  pointer-events: auto;
+}
+
+#SocialsContainer a:hover {
+  transform: scale(1.2);
+  filter: invert(95%) brightness(110%);
+}
+
+/* Project List */
+.Project {
+  margin-bottom: 0.7vh;
+  padding: 0.9vh;
+  border-radius: 0.9vh;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-decoration: none;
+
+  background-color: rgba(255,255,255,0.03);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.Project:hover {
+  background-color: rgba(27,217,194,0.08);
+  transform: translateX(2%);
+}
+
+.Project p {
+  user-select: none;
+  font-size: 1.5vh;
+  color: #cde8f6;
+}
+
+/* Separator Line */
+.Separator {
+  flex-grow: 1;
+  border-bottom: 1px solid #355b6c;
+  margin: 0 0.75vh 0.75em;
+}
