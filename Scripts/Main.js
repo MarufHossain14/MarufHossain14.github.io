@@ -771,34 +771,91 @@ SetActiveSection();
 // Projects list logic // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
 
 const Projects = document.querySelectorAll(".Project");
-const Letters = "abcdefghijklmnopqrstuvwxtz0123456789";
+const Letters = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+// Store intervals for cleanup
+const ProjectIntervals = new Map();
+
+// Initialize project text elements with their proper content
+function InitializeProjectText() {
+  Projects.forEach((Project) => {
+    Project.querySelectorAll("p").forEach((Text) => {
+      if (Text.dataset.value) {
+        Text.innerText = Text.dataset.value;
+      }
+    });
+  });
+}
+
+// Initialize text on page load
+InitializeProjectText();
 
 // For every project item
 Projects.forEach((Project) => {
   // When mouse enters item
   Project.addEventListener("mouseenter", (event) => {
+    const projectElement = event.currentTarget;
+
+    // Clear any existing intervals for this project
+    if (ProjectIntervals.has(projectElement)) {
+      ProjectIntervals.get(projectElement).forEach((interval) =>
+        clearInterval(interval)
+      );
+    }
+
+    const intervals = [];
+
     // For every text object in item
-    event.target.querySelectorAll("p").forEach((Text) => {
+    projectElement.querySelectorAll("p").forEach((Text) => {
+      const originalText = Text.dataset.value;
       let Iteration = 0;
 
-      let Interval = setInterval(() => {
+      // Reset text to original first
+      Text.innerText = originalText;
+
+      const Interval = setInterval(() => {
         // Split text into its letters
-        Text.innerText = Text.dataset.value
+        Text.innerText = originalText
           .split("")
           .map((letter, index) => {
             if (index < Iteration || letter === " ") {
               return letter;
             }
-            return Letters[Math.floor(Math.random() * 36)];
+            return Letters[Math.floor(Math.random() * Letters.length)];
           })
           .join("");
 
-        if (Iteration >= Text.dataset.value.length) {
+        if (Iteration >= originalText.length) {
           clearInterval(Interval);
+          // Remove from intervals array
+          const index = intervals.indexOf(Interval);
+          if (index > -1) intervals.splice(index, 1);
         }
 
         Iteration += 1;
-      }, 30);
+      }, 25); // Slightly faster for better effect
+
+      intervals.push(Interval);
+    });
+
+    ProjectIntervals.set(projectElement, intervals);
+  });
+
+  // When mouse leaves item
+  Project.addEventListener("mouseleave", (event) => {
+    const projectElement = event.currentTarget;
+
+    // Clear all intervals for this project
+    if (ProjectIntervals.has(projectElement)) {
+      ProjectIntervals.get(projectElement).forEach((interval) =>
+        clearInterval(interval)
+      );
+      ProjectIntervals.delete(projectElement);
+    }
+
+    // Reset all text to original values
+    projectElement.querySelectorAll("p").forEach((Text) => {
+      Text.innerText = Text.dataset.value;
     });
   });
 });
