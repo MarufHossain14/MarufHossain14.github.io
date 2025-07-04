@@ -5,12 +5,19 @@ function ResizeCanvasToDisplaySize(Canvas)
     const DisplayWidth = window.innerWidth;
     const DisplayHeight = window.innerHeight;
 
-    if (Canvas.width !== DisplayWidth || Canvas.height !== DisplayHeight)
-    {
-        Canvas.width = DisplayWidth;
-        Canvas.height = DisplayHeight;
+    // Mac-specific fix for high DPI displays
+    const devicePixelRatio = window.devicePixelRatio || 1;
+    const actualWidth = DisplayWidth * devicePixelRatio;
+    const actualHeight = DisplayHeight * devicePixelRatio;
 
-        WebGL.viewport(0, 0, DisplayWidth, DisplayHeight);
+    if (Canvas.width !== actualWidth || Canvas.height !== actualHeight)
+    {
+        Canvas.width = actualWidth;
+        Canvas.height = actualHeight;
+        Canvas.style.width = DisplayWidth + 'px';
+        Canvas.style.height = DisplayHeight + 'px';
+
+        WebGL.viewport(0, 0, actualWidth, actualHeight);
     }
 }
 

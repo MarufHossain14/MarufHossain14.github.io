@@ -1,8 +1,17 @@
 // Get the canvas element
 const Canvas = document.getElementById("Canvas3D");
 
-// Initialize the WebGL2 context
-const WebGL = Canvas.getContext("webgl2");
+// Initialize the WebGL2 context with Mac-specific options
+const WebGL = Canvas.getContext("webgl2", {
+  alpha: false,
+  antialias: false,
+  depth: true,
+  failIfMajorPerformanceCaveat: false,
+  powerPreference: "default",
+  premultipliedAlpha: false,
+  preserveDrawingBuffer: false,
+  stencil: false,
+});
 
 if (!WebGL) {
   alert("WebGL2 is not available.");
@@ -393,7 +402,7 @@ function UpdateTextTexture(NewText) {
     Context.fillText(line, 32, 64 + i * 32);
   });
 
-  WebGL.bindTexture(WebGL.TEhXTURE_2D, TextTexture);
+  WebGL.bindTexture(WebGL.TEXTURE_2D, TextTexture);
   WebGL.texImage2D(
     WebGL.TEXTURE_2D,
     0,
@@ -460,7 +469,7 @@ let CurrentlyPressedKey = null;
 // Event listener for keydown
 Canvas.addEventListener("keydown", (event) => {
   if (!["Enter", CurrentlyPressedKey].includes(event.key)) {
-    KeyboardPressed.play();
+    PlayAudioSafely(KeyboardPressed);
     KeyboardPressed.currentTime = 0;
   }
 
@@ -483,13 +492,44 @@ const ComputerAmbient = document.getElementById("ComputerAmbient");
 const ComputerBeep = document.getElementById("ComputerBeep");
 const KeyboardPressed = document.getElementById("KeyboardPressed");
 
+// Mac-specific audio fixes
 ComputerBoot.volume = 0;
 ComputerAmbient.volume = 0;
+
+// Fix for Mac audio autoplay restrictions
+function PlayAudioSafely(audioElement) {
+  if (!AudioEnabled) return;
+
+  const playPromise = audioElement.play();
+  if (playPromise !== undefined) {
+    playPromise.catch((error) => {
+      console.log("Audio autoplay prevented:", error);
+    });
+  }
+}
 
 // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
 
 // Add tabindex to make canvas focusable
 Canvas.tabIndex = 1;
+
+// Mac-specific: Enable audio after user interaction
+let AudioEnabled = false;
+function EnableAudio() {
+  if (!AudioEnabled) {
+    AudioEnabled = true;
+    // Pre-load audio files
+    ComputerBoot.load();
+    ComputerAmbient.load();
+    ComputerBeep.load();
+    KeyboardPressed.load();
+  }
+}
+
+// Enable audio on first user interaction
+document.addEventListener("click", EnableAudio, { once: true });
+document.addEventListener("keydown", EnableAudio, { once: true });
+document.addEventListener("touchstart", EnableAudio, { once: true });
 
 let Time = 0;
 let LastTime = 0;
@@ -499,8 +539,8 @@ function UpdateScene(CurrentTime) {
   // Check if this is first render
   if (Time == 0) {
     // Play boot and ambient sounds
-    ComputerBoot.play();
-    ComputerAmbient.play();
+    PlayAudioSafely(ComputerBoot);
+    PlayAudioSafely(ComputerAmbient);
 
     // Make ambient sound repeat
     ComputerAmbient.loop = true;
